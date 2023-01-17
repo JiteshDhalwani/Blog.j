@@ -1,0 +1,90 @@
+{% extends 'blog/layout.html' %}
+
+
+{% block title %}
+    Home
+{% endblock title %}
+
+{% block body %}
+
+<!-- Heading -->
+<section class="container index_container">
+    <h3 class="mb-4"><strong>Latest Blogs</strong></h3>
+</section>
+
+
+<!-- First card -->
+{% if latest %}
+<section>
+    <a href="{% url 'view_blog' latest.id %}" class="card_link">
+        <div class="container-md index_container">
+            <div class="card rounded-4 overflow-hidden mb-4 border-0 border">
+                <div class="row">
+                    <div class="col-md-8 user_image_container">
+                        <div class="overflow-hidden user_image_container">
+                            <img src="{{ latest.image.url }}" class="img-fluid zoom display_animation user_image_control">
+                        </div>
+                    </div>
+                    <div class="col-md-4 d-flex">
+                        <div class="card-body d-flex flex-column">
+                            <p class="card_info_font mt-2">{{ latest.category }}</p>
+                            <h3 class="mb-4">
+                                <strong>{{ latest.title }}</strong>
+                            </h3>
+                            <div class="mt-auto d-flex flex-md-column justify-content-between">
+                                <p class="card_info_font mt-auto">Written by: {{ latest.author }}</p>
+                                <p class="card_info_font mt-auto mb-0"><i class="bi bi-clock"></i> {{ latest.readtime }}</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+{% endif %}
+
+
+<!-- Card List -->
+<div class="container index_container d-flex flex-wrap justify-content-between">
+    {% for blog in blogs %}
+            <div class="item mb-4">
+                <a class="card_link" href="{% url 'view_blog' blog.id %}">
+                    <div class="card rounded-4 overflow-hidden border-0 border vertical_card">
+                        <div class="overflow-hidden image_container">
+                            <img src="{{ blog.image.url }}" class="img-fluid card-imgage-top image_size_control zoom display_animation">
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <p class="card_info_font">{{ blog.category }}</p>
+                            <h3 class="mb-3">
+                                {{ blog.title }}
+                            </h3>
+                            <div class="d-flex justify-content-between">
+                                <p class="card_info_font mt-auto">Written by: {{ blog.author }}</p>
+                                <p class="card_info_font mt-auto"><i class="bi bi-clock"></i> {{ blog.readtime }}</p> 
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+    {% endfor %}
+</div>
+
+ <!-- Footer -->
+ <footer>
+    <div class="container index_container">
+        <nav style="--bs-breadcrumb-divider: '>';" class="p-5 text-center position-relative mt-5">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item active"><a class="card_link" href="{% url 'index' %}">Home</a></li>                        
+            </ol>
+
+            <a href="#" id="page_up_button" class="position-absolute bottom-0 end-0 p-5 text-secondary">
+                <i class="bi bi-arrow-up-circle h1"></i>
+            </a>
+        </nav>
+    </div>
+</footer>
+    
+
+{% endblock body %}

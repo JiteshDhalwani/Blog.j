@@ -1,0 +1,45 @@
+{% extends 'blog/layout.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+    Create Blog
+{% endblock title %}
+
+
+{% block body %}
+    
+
+    <section>
+        <div class="container index_container">
+            <div class="card">
+                <div class="card-header">
+                    Create New Blog
+                </div>
+                <div class="card-body">
+                    <form action="{% url 'create_blog' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form | crispy }}
+                        <button class="btn" id="new_blog_post_btn">Post</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+ <!-- Footer -->
+ <footer>
+    <div class="container index_container">
+        <nav style="--bs-breadcrumb-divider: '>';" class="p-5 text-center position-relative mt-5">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a class="card_link" href="{% url 'index' %}">Home</a></li>  
+                <li class="breadcrumb-item active"><a class="card_link" href="{% url 'create_blog' %}">Create New Blog</a></li>                       
+            </ol>
+
+            <a href="#" class="position-absolute bottom-0 end-0 p-5 text-secondary">
+                <i class="bi bi-arrow-up-circle h1"></i>
+            </a>
+        </nav>
+    </div>
+</footer>
+{% endblock body %}    

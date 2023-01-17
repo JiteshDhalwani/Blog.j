@@ -1,0 +1,136 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>Blog.j - {{ blog.title }}</title>
+</head>
+<body>
+
+
+<!-- First Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark p-1" id="first_navbar">
+    <div class="container index_container">
+        <a href="{% url 'index' %}" class="navbar-brand"><i class="bi bi-chat-right-dots-fill"></i></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav">
+
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a href="{% url 'create_blog' %}" class="nav-link">Create New Blog</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a href="{% url 'login' %}" class="nav-link">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'register' %}" class="nav-link">Register</a>
+                    </li>
+                {% endif %}
+
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link" role="button" data-bs-toggle="dropdown" aria-expanded="false">Categories <i class="bi bi-chevron-down"></i> </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'show_category' "Tech" %}">Tech</a></li>
+                        <li><a class="dropdown-item" href="{% url 'show_category' "Business" %}">Business</a></li>
+                        <li><a class="dropdown-item" href="{% url 'show_category' "Finance" %}">Finance</a></li>
+                        <li><a class="dropdown-item" href="{% url 'show_category' "Sports" %}">Sports</a></li>
+                        <li><a class="dropdown-item" href="{% url 'show_category' "Health" %}">Health</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'show_category' "None" %}">None</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <form action="{% url 'search' %}" role="search" method="post" class="d-flex ms-auto">
+                {% csrf_token %}
+                <input type="search" placeholder="Search" class="form-control me-2 w-75" id="navbar_input" name="query">
+                <button class="btn" id="navbar_search_button" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+
+<!-- Second Navbar -->
+<nav class="navbar navbar-expand-lg p-1 mb-5" id="second_navbar">
+    <div class="container index_container">
+        <a href="{% url 'index' %}" class="navbar-brand">Blog.j</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar2SupportedContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar2SupportedContent">
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link" role="button" data-bs-toggle="dropdown" aria-expanded="false"> Hi, {{ user.username }} <i class="bi bi-chevron-down"></i> </a>
+                            <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Section -->
+<section>
+    <div class="container article_container">
+        
+        {% if blog.category != "None" %}
+            <p class="card_info_font my-0 badge category_badge"><a class="card_link" href="{% url 'show_category' blog.category %}">{{ blog.category }}</a></p>
+        {% endif %}
+            
+        <p class="card_info_font">{{ blog.date_time }}</p>
+        <h1 class="article_title">{{ blog.title }}</h1>
+        <div class="d-flex flex-column flex-md-row justify-content-between">
+            <p class="card_info_font">Written by: <a style="color: #800020;" href="{% url 'display_user' blog.author.id %}">{{ blog.author.username }}</a></p>            
+            {% if user == blog.author %}
+                <button type="button" class="btn btn-outline-danger p-1"><a class="card_link" href="{% url 'delete_blog' blog.id %}"> Delete Blog</a></button>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="article_image_container mt-4">
+        <img src="{{ blog.image.url }}" class="img-fluid article_image_restrict rounded-4">
+    </div>
+
+    <div class="container article_container mt-3">
+        <p class="article_image_caption">{{ blog.image_caption }}</p>
+    </div>
+
+    <div class="container article_container article_text_font mt-5 overflow-hidden" id="content_id">
+        {{ content|safe }}
+    </div>
+    
+    
+    <!-- Footer -->
+    <footer id="article_footer">
+        <div class="container index_container">
+            <nav style="--bs-breadcrumb-divider: '>';" class="p-5 text-center position-relative mt-5">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a class="card_link" href="{% url 'index' %}">Home</a></li>
+                    <li class="breadcrumb-item active">{{ blog.title }}</li>
+                </ol>
+
+                <a href="#" class="position-absolute bottom-0 end-0 p-5 text-secondary">
+                    <i class="bi bi-arrow-up-circle h1"></i>
+                </a>
+            </nav>
+        </div>
+    </footer>
+
+</section>
+</body>
+    
+
